@@ -9,11 +9,12 @@
     <script>
         const cookieTest = (iFrameUri, callBack) => {
             const messageHandler = (event) => {
-                // check for trusted origins here
-                const data = JSON.parse(event.data)
-                callBack(data["result"])
-                window.removeEventListener("message", messageHandler);
-                document.body.removeChild(frame)
+                console.log("event", event)
+                if (event.data === "3pcSupported" || event.data === "3pcUnsupported") {
+                    callBack(event.data === "3pcSupported");
+                    document.body.removeChild(frame);
+                    window.removeEventListener("message", messageHandler);
+                }
             }
 
             window.addEventListener("message", messageHandler);
@@ -27,7 +28,7 @@
             document.body.appendChild(frame)
         }
 
-        cookieTest("./third-party-cookies-iframe.html", (data) => {
+        cookieTest("https://chamithrepo.github.io/create-third-party-cookie/", (data) => {
             document.getElementById("h1").innerText = data
             console.log(data)
         })
