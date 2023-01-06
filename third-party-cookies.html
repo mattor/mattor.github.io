@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 
 <body>
@@ -9,7 +10,7 @@
     <script>
         const cookieTest = (iFrameUri, callBack) => {
             const messageHandler = (event) => {
-                console.log("event", event)
+                console.log("event", event.data)
                 if (event.data === "3pcSupported" || event.data === "3pcUnsupported") {
                     callBack(event.data);
                     document.body.removeChild(frame);
@@ -17,15 +18,13 @@
                 }
             }
 
+            const frame = document.createElement("iframe");
+            frame.id = "3pc";
+            frame.src = iFrameUri;
+            frame.style.display = "none";
+            frame.style.position = "fixed";
+            document.body.appendChild(frame);
             window.addEventListener("message", messageHandler);
-            const frame = document.createElement("iframe")
-            frame.src = iFrameUri
-            frame.sandbox = "allow-scripts allow-same-origin"
-            frame.style = "display:none"
-            frame.onload = (e) => {
-                frame.contentWindow.postMessage(JSON.stringify({ "test": "cookie" }), "*");
-            }
-            document.body.appendChild(frame)
         }
 
         cookieTest("https://chamithrepo.github.io/create-third-party-cookie/", (data) => {
