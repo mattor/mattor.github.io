@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+
+<head>
+</head>
+
+<body>
+    <h1 id="h1"></h1>
+    <script>
+        const cookieTest = (iFrameUri, callBack) => {
+            const messageHandler = (event) => {
+                // check for trusted origins here
+                const data = JSON.parse(event.data)
+                callBack(data["result"])
+                window.removeEventListener("message", messageHandler);
+                document.body.removeChild(frame)
+            }
+
+            window.addEventListener("message", messageHandler);
+            const frame = document.createElement("iframe")
+            frame.src = iFrameUri
+            frame.sandbox = "allow-scripts allow-same-origin"
+            frame.style = "display:none"
+            frame.onload = (e) => {
+                frame.contentWindow.postMessage(JSON.stringify({ "test": "cookie" }), "*");
+            }
+            document.body.appendChild(frame)
+        }
+
+        cookieTest("./iframe.html", (data) => {
+            document.getElementById("h1").innerText = data
+            console.log(data)
+        })
+    </script>
+</body>
+
+</html>
